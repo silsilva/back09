@@ -1,9 +1,11 @@
 import { User } from "lib/user";
 import { Auth } from "lib/auth";
 import nodemailer from "nodemailer";
+const codes = {};
+
 export async function sendCodeToEmail(email: string) {
   const dat = await Auth.findByEmail(email);
-  const codigo = await dat.data.code;
+
   const config = {
     host: "smtp.gmail.com",
     port: 587,
@@ -16,10 +18,10 @@ export async function sendCodeToEmail(email: string) {
     from: process.env.EMAIL,
     to: email,
     subject: "CODIGO",
-    text: `${codigo}`,
+    text: `${dat.data.code}`,
   };
   const transport = nodemailer.createTransport(config);
-  const info = await transport.sendMail(mensaje);
+  await transport.sendMail(mensaje);
 }
 
 export async function validationToProduct(userId, accepted) {
